@@ -16,7 +16,7 @@ connectDB();
 app.use(express.json());
 app.use(cookieParser());
 
-const allowedOrigins = [process.env.VITE_FRONTEND_URL, "http://localhost:5174"];
+const allowedOrigins = 'https://ai-powerd-financial-tracker-frontend.onrender.com';
 
 app.use(
   cors({
