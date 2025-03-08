@@ -16,13 +16,20 @@ connectDB();
 app.use(express.json());
 app.use(cookieParser());
 
-app.use(cors({
-    origin: 'https://ai-powerd-financial-tracker-frontend.onrender.com',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    preflightContinue: false,
-    optionsSuccessStatus: 204
-}));
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'https://ai-powerd-financial-tracker-frontend.onrender.com');
+  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
 
+app.use(express.json());
+
+// Your routes here
+app.post('/api/auth/login', (req, res) => {
+  // Handle login
+  res.send('Login successful');
+});
 
 app.use("/api/auth", authRoutes);
 app.use("/api/expenses", expenseRoutes);
