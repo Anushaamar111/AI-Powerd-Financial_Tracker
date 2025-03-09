@@ -39,7 +39,7 @@ const login = async (req, res) => {
     // Set cookies with appropriate attributes
     res.cookie("access_token", accessToken, {
       httpOnly: true,   // Prevents JavaScript access
-      secure: false,    // ❗ Set to false for localhost testing, true in production
+      secure: true,    // ❗ Set to false for localhost testing, true in production
       sameSite: "None", // 🔹 Set to "None" when using different frontend/backend domains
       path: "/",
     });

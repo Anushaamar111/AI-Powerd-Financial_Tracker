@@ -26,12 +26,11 @@ app.use(cookieParser());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
-// CORS Middleware
-const allowedOrigins = ["https://ai-powerd-financial-tracker-frontend.onrender.com"];
+
 
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: "https://ai-powerd-financial-tracker-frontend.onrender.com",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
