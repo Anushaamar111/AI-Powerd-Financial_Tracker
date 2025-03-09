@@ -1,3 +1,4 @@
+// filepath: c:\Users\anush\Desktop\mini_expense_tracker\client\src\pages\AISuggestion.jsx
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../contexts/AuthContext";
@@ -36,10 +37,27 @@ const AISuggestion = () => {
     e.preventDefault();
     setLoading(true);
     try {
+      // Retrieve the access token from cookies
+      const accessToken = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("access_token="))
+        ?.split("=")[1];
+
+      if (!accessToken) {
+        console.error("Access token not found");
+        setSuggestions("Authentication error: Access token missing.");
+        return;
+      }
+
       const response = await axios.post(
         `${API_URL}/api/ai/suggestions`,
         { income, budget, totalSpending },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${accessToken}`, // Include the access token
+          },
+        }
       );
       setSuggestions(response.data.suggestions);
     } catch (error) {

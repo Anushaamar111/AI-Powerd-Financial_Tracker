@@ -1,3 +1,4 @@
+// filepath: c:\Users\anush\Desktop\mini_expense_tracker\server\controller\authController.js
 import User from "../models/user.js";
 import {
   generateAccessToken,
@@ -16,7 +17,7 @@ const register = async (req, res) => {
     const name = `${firstName} ${lastName}`;
     const newUser = new User({ firstName, lastName, email, password, name });
     await newUser.save();
-    
+
     res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
     console.error("Error during registration:", error);
@@ -36,8 +37,19 @@ const login = async (req, res) => {
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
-    res.cookie("access_token", accessToken, { httpOnly: true, secure: true });
-    res.cookie("refresh_token", refreshToken, { httpOnly: true, secure: true });
+    // Set cookies with appropriate attributes
+    res.cookie("access_token", accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // Set to true in production
+      sameSite: "strict",
+      //domain: '.yourdomain.com', // Replace with your domain if needed
+    });
+    res.cookie("refresh_token", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // Set to true in production
+      sameSite: "strict",
+      //domain: '.yourdomain.com', // Replace with your domain if needed
+    });
 
     res.json({ message: "Login successful" });
   } catch (error) {
@@ -63,7 +75,6 @@ const logoutUser = async (req, res) => {
     res.status(500).json({ message: "Logout failed", error: error.message });
   }
 };
-
 
 const refreshToken = (req, res) => {
   const refreshToken = req.cookies.refresh_token;

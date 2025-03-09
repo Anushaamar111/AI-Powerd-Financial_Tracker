@@ -1,3 +1,4 @@
+// filepath: c:\Users\anush\Desktop\mini_expense_tracker\server\utils\gemini.js
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import * as dotenv from "dotenv";
 import { getUserSpending } from "../controller/expenseController.js"; // Import the new utility function
@@ -16,8 +17,8 @@ export const getExpenseSuggestions = async (income, budget, userId) => {
       - Monthly Budget: ₹${budget}
       - Total Spending so far: ₹${totalSpending}
 
-      Based on this data, please provide detailed and actionable suggestions for better managing their finances. 
-      The suggestions should be practical and easy to implement. 
+      Based on this data, please provide detailed and actionable suggestions for better managing their finances.
+      The suggestions should be practical and easy to implement.
       Present the suggestions in a clear and concise list format.
     `;
 
