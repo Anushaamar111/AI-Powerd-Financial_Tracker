@@ -22,8 +22,9 @@ connectDB()
   });
 
 // Middleware
-app.use(express.json({ limit: "10mb" })); // Prevent large payloads
 app.use(cookieParser());
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true }));
 
 // CORS Middleware
 const allowedOrigins = ["https://ai-powerd-financial-tracker-frontend.onrender.com"];
@@ -34,6 +35,7 @@ app.use(
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    exposedHeaders: ["set-cookie"], // ✅ Allow reading cookies
   })
 );
 

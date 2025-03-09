@@ -140,8 +140,11 @@ export default function Dashboard() {
   const handleAdd = async (e) => {
     e.preventDefault();
     try {
+      const accessToken = document.cookie.split("; ").find(row => row.startsWith("access_token="))?.split("=")[1];
       const { data } = await axios.post(API_URL, form, {
         withCredentials: true,
+        headers: { Authorization: `Bearer ${accessToken}` },
+        
       });
       setExpenses((prev) => [data.expense, ...prev]);
       fetchChartData();

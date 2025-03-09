@@ -26,8 +26,8 @@ const Login = () => {
           { withCredentials: true } // Ensure cookies are sent
         );
 
-        setUser(data.user); // Store authenticated user
-        navigate("/dashboard"); // Redirect to dashboard after login
+        document.cookie = `access_token=${data.accessToken}; path=/; Secure; HttpOnly`;
+        setTimeout(() => navigate("/dashboard"), 200); // Delay redirect
       } else {
         // 🔹 REGISTER Request
         const { data } = await axios.post(
