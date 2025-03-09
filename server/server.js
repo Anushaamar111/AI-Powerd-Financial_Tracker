@@ -9,33 +9,37 @@ import aiRoute from "./routes/aiRoute.js";
 import chatbotRoutes from "./routes/chatbotRoute.js";
 import portfinder from "portfinder";
 
-dotenv.config(); // Ensure this line is present
+dotenv.config(); // Load environment variables
+
 const app = express();
 
+// Connect to the database
 connectDB();
+
+// Middleware
 app.use(express.json());
 app.use(cookieParser());
 
-const allowedOrigins = [process.env.VITE_FRONTEND_URL, "http://localhost:5174"];
-
+// CORS Middleware
 app.use(
   cors({
-    credentials: true,
-    origin: function (origin, callback) {
-      if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: "https://ai-powerd-financial-tracker-frontend.onrender.com", // Allow frontend access
+    credentials: true, // Allow cookies
+    methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
+    allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
   })
 );
 
+// Handle preflight requests (OPTIONS)
+app.options("*", cors());
+
+// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/expenses", expenseRoutes);
 app.use("/api/ai", aiRoute);
 app.use("/api/chatbot", chatbotRoutes);
 
+// Start server on an available port
 portfinder.getPort((err, port) => {
   if (err) throw err;
   app.listen(port, () => console.log(`Server running on port ${port}`));
