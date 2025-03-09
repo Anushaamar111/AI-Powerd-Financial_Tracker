@@ -16,7 +16,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-
+  
     try {
       if (isLogin) {
         // 🔹 LOGIN Request
@@ -28,9 +28,12 @@ const Login = () => {
           },
           { withCredentials: true }
         );
-
+  
         setUser(data.user); // Store authenticated user
-        navigate("/dashboard"); // Redirect after login
+        // Delay the redirection to ensure the cookie is set
+        setTimeout(() => {
+          navigate("/dashboard"); // Redirect after login
+        }, 200); // Adjust the delay as needed (e.g., 200ms)
       } else {
         // 🔹 REGISTER Request
         const { data } = await axios.post(`${API_URL}/register`, {
@@ -39,7 +42,7 @@ const Login = () => {
           email: form.email,
           password: form.password,
         });
-
+  
         alert("Registration successful! Please log in.");
         setIsLogin(true); // Switch to login after registration
       }

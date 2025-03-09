@@ -1,4 +1,3 @@
-// filepath: c:\Users\anush\Desktop\mini_expense_tracker\server\controller\authController.js
 import User from "../models/user.js";
 import {
   generateAccessToken,
@@ -42,12 +41,14 @@ const login = async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production", // Set to true in production
       sameSite: "strict",
+      path: "/", // Add this line!
       //domain: '.yourdomain.com', // Replace with your domain if needed
     });
     res.cookie("refresh_token", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production", // Set to true in production
       sameSite: "strict",
+      path: "/", // Add this line!
       //domain: '.yourdomain.com', // Replace with your domain if needed
     });
 
@@ -64,11 +65,13 @@ const logoutUser = async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
+      path: "/", // Add this line!
     });
     res.clearCookie("refresh_token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
+      path: "/", // Add this line!
     });
     res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
@@ -86,7 +89,9 @@ const refreshToken = (req, res) => {
     const newAccessToken = generateAccessToken(user);
     res.cookie("access_token", newAccessToken, {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/", // Add this line!
     });
     res.json({ accessToken: newAccessToken });
   });

@@ -4,7 +4,7 @@ import axios from "axios";
 import { useAuth } from "../contexts/AuthContext";
 import { DollarSign, PiggyBank, Brain } from "lucide-react";
 import { ClipLoader } from "react-spinners";
-
+import { getAccessToken } from "../utils/cookieUtils";
 const AISuggestion = () => {
   const [income, setIncome] = useState("");
   const [budget, setBudget] = useState("");
@@ -38,10 +38,7 @@ const AISuggestion = () => {
     setLoading(true);
     try {
       // Retrieve the access token from cookies
-      const accessToken = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("access_token="))
-        ?.split("=")[1];
+      const accessToken = getAccessToken();
 
       if (!accessToken) {
         console.error("Access token not found");

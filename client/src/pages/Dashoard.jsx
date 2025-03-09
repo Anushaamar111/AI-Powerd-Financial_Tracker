@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { getAccessToken } from "../utils/cookieUtils";
 import axios from "axios";
 import {
   PlusCircle,
@@ -100,11 +101,8 @@ export default function Dashboard() {
   const handleDelete = async (id) => {
     try {
       // Retrieve the access token from cookies
-      const accessToken = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("access_token="))
-        ?.split("=")[1];
-  
+      const accessToken = getAccessToken();
+
       if (!accessToken) {
         console.error("Access token not found");
         // Handle the error appropriately (e.g., redirect to login)
@@ -141,11 +139,8 @@ export default function Dashboard() {
     if (!editExpense) return;
     try {
       // Retrieve the access token from cookies
-      const accessToken = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("access_token="))
-        ?.split("=")[1];
-  
+      const accessToken = getAccessToken();
+
       if (!accessToken) {
         console.error("Access token not found");
         // Handle the error appropriately (e.g., redirect to login)
@@ -177,10 +172,7 @@ export default function Dashboard() {
   const handleAdd = async (e) => {
     e.preventDefault();
     try {
-      const accessToken = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("access_token="))
-      ?.split("=")[1];
+      const accessToken = getAccessToken();
 
     if (!accessToken) {
       console.error("Access token not found");
