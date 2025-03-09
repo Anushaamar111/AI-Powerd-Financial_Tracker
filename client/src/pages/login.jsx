@@ -11,38 +11,36 @@ const Login = () => {
   const [form, setForm] = useState({ email: "", password: "", name: "" });
   const [error, setError] = useState("");
 
-  const API_URL = "https://ai-powerd-financial-tracker.onrender.com/api/auth";
+  const API_URL = import.meta.env.VITE_BACKEND_URL; // Use environment variable
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-  
+
     try {
       if (isLogin) {
         // 🔹 LOGIN Request
         const { data } = await axios.post(
-          `${API_URL}/login`,
+          `${API_URL}/api/auth/login`,
+          { email: form.email, password: form.password },
+          { withCredentials: true } // Ensure cookies are sent
+        );
+
+        setUser(data.user); // Store authenticated user
+        navigate("/dashboard"); // Redirect to dashboard after login
+      } else {
+        // 🔹 REGISTER Request
+        const { data } = await axios.post(
+          `${API_URL}/api/auth/register`,
           {
+            firstName: form.name.split(" ")[0],
+            lastName: form.name.split(" ")[1] || "",
             email: form.email,
             password: form.password,
           },
-          { withCredentials: true }
+          { withCredentials: true } // Ensure authentication works immediately after sign-up
         );
-  
-        setUser(data.user); // Store authenticated user
-        // Delay the redirection to ensure the cookie is set
-        setTimeout(() => {
-          navigate("/dashboard"); // Redirect after login
-        }, 200); // Adjust the delay as needed (e.g., 200ms)
-      } else {
-        // 🔹 REGISTER Request
-        const { data } = await axios.post(`${API_URL}/register`, {
-          firstName: form.name.split(" ")[0],
-          lastName: form.name.split(" ")[1] || "",
-          email: form.email,
-          password: form.password,
-        });
-  
+
         alert("Registration successful! Please log in.");
         setIsLogin(true); // Switch to login after registration
       }

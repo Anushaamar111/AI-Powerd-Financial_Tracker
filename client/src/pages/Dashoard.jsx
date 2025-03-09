@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import { getAccessToken } from "../utils/cookieUtils";
 import axios from "axios";
 import {
   PlusCircle,
@@ -101,21 +100,7 @@ export default function Dashboard() {
 
   const handleDelete = async (id) => {
     try {
-      // Retrieve the access token from cookies
-      const accessToken = getAccessToken();
-
-      if (!accessToken) {
-        console.error("Access token not found");
-        // Handle the error appropriately (e.g., redirect to login)
-        return;
-      }
-  
-      await axios.delete(`${API_URL}/${id}`, {
-        withCredentials: true,
-        headers: {
-          Authorization: `Bearer ${accessToken}`, // Include the access token
-        },
-      });
+      await axios.delete(`${API_URL}/${id}`, { withCredentials: true });
       setExpenses((prevExpenses) =>
         prevExpenses.filter((expense) => expense._id !== id)
       );
@@ -134,30 +119,13 @@ export default function Dashboard() {
       description: expense.description || "",
     });
   };
-
   const handleUpdate = async (e) => {
     e.preventDefault();
     if (!editExpense) return;
     try {
-      // Retrieve the access token from cookies
-      const accessToken = getAccessToken();
-
-      if (!accessToken) {
-        console.error("Access token not found");
-        // Handle the error appropriately (e.g., redirect to login)
-        return;
-      }
-  
-      const { data } = await axios.put(
-        `${API_URL}/${editExpense._id}`,
-        form,
-        {
-          withCredentials: true,
-          headers: {
-            Authorization: `Bearer ${accessToken}`, // Include the access token
-          },
-        }
-      );
+      const { data } = await axios.put(`${API_URL}/${editExpense._id}`, form, {
+        withCredentials: true,
+      });
       setExpenses((prevExpenses) =>
         prevExpenses.map((expense) =>
           expense._id === data.expense._id ? data.expense : expense
@@ -169,32 +137,12 @@ export default function Dashboard() {
       console.error("Error updating expense:", error);
     }
   };
-
   const handleAdd = async (e) => {
     e.preventDefault();
     try {
-      const accessToken = getAccessToken();
-
-      if (!accessToken) {
-        console.error("Access token not found");
-        // Handle the error appropriately (e.g., redirect to login)
-        return;
-      }
-
-      console.log("Form Data:", form); // Add this line
-      console.log("API URL:", API_URL); // Add this line
-      console.log("Access Token:", accessToken); // Add this line
-
-      const { data } = await axios.post(
-        API_URL,
-        form,
-        {
-          withCredentials: true,
-          headers: {
-            Authorization: `Bearer ${accessToken}`, // Include the access token
-          },
-        }
-      );
+      const { data } = await axios.post(API_URL, form, {
+        withCredentials: true,
+      });
       setExpenses((prev) => [data.expense, ...prev]);
       fetchChartData();
       setShowAddForm(false);

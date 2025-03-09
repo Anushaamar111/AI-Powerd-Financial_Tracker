@@ -33,26 +33,25 @@ const login = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const accessToken = generateAccessToken(user);
-    const refreshToken = generateRefreshToken(user);
+    const accessToken = generateAccessToken(user._id); // Use user._id instead of entire user object
+    const refreshToken = generateRefreshToken(user._id);
 
     // Set cookies with appropriate attributes
     res.cookie("access_token", accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Set to true in production
+      secure: process.env.NODE_ENV === "production", // Use secure cookies in production
       sameSite: "strict",
-      path: "/", // Add this line!
-      //domain: '.yourdomain.com', // Replace with your domain if needed
-    });
-    res.cookie("refresh_token", refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Set to true in production
-      sameSite: "strict",
-      path: "/", // Add this line!
-      //domain: '.yourdomain.com', // Replace with your domain if needed
+      path: "/", // Cookie is available on the entire site
     });
 
-    res.json({ message: "Login successful" });
+    res.cookie("refresh_token", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
+    });
+
+    res.json({ message: "Login successful", user: { id: user._id, email: user.email, name: user.name } });
   } catch (error) {
     console.error("Error during login:", error);
     res.status(500).json({ message: "Server error", error: error.message });
@@ -65,14 +64,16 @@ const logoutUser = async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      path: "/", // Add this line!
+      path: "/",
     });
+
     res.clearCookie("refresh_token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      path: "/", // Add this line!
+      path: "/",
     });
+
     res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
     res.status(500).json({ message: "Logout failed", error: error.message });
@@ -83,16 +84,17 @@ const refreshToken = (req, res) => {
   const refreshToken = req.cookies.refresh_token;
   if (!refreshToken) return res.status(401).json({ message: "Unauthorized" });
 
-  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
     if (err) return res.status(403).json({ message: "Invalid refresh token" });
 
-    const newAccessToken = generateAccessToken(user);
+    const newAccessToken = generateAccessToken(decoded.id); // Use decoded.id to generate a new token
     res.cookie("access_token", newAccessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      path: "/", // Add this line!
+      path: "/",
     });
+
     res.json({ accessToken: newAccessToken });
   });
 };

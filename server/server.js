@@ -14,19 +14,26 @@ dotenv.config(); // Load environment variables
 const app = express();
 
 // Connect to the database
-connectDB();
+connectDB()
+  .then(() => console.log("✅ Database connected successfully"))
+  .catch((err) => {
+    console.error("❌ Database connection failed:", err);
+    process.exit(1); // Exit if DB connection fails
+  });
 
 // Middleware
-app.use(express.json());
+app.use(express.json({ limit: "10mb" })); // Prevent large payloads
 app.use(cookieParser());
 
 // CORS Middleware
+const allowedOrigins = ["https://ai-powerd-financial-tracker-frontend.onrender.com"];
+
 app.use(
   cors({
-    origin: "https://ai-powerd-financial-tracker-frontend.onrender.com", // Allow frontend access
-    credentials: true, // Allow cookies
-    methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
-    allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
+    origin: allowedOrigins,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
@@ -39,8 +46,22 @@ app.use("/api/expenses", expenseRoutes);
 app.use("/api/ai", aiRoute);
 app.use("/api/chatbot", chatbotRoutes);
 
+// Default route
+app.get("/", (req, res) => {
+  res.send("🚀 AI-Powered Financial Tracker Backend is Running!");
+});
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+  console.error("Server Error:", err);
+  res.status(500).json({ message: "Internal Server Error", error: err.message });
+});
+
 // Start server on an available port
 portfinder.getPort((err, port) => {
-  if (err) throw err;
-  app.listen(port, () => console.log(`Server running on port ${port}`));
+  if (err) {
+    console.error("❌ Failed to find available port:", err);
+    process.exit(1);
+  }
+  app.listen(port, () => console.log(`✅ Server running on port ${port}`));
 });

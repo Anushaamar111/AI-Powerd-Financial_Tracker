@@ -1,10 +1,9 @@
-// filepath: c:\Users\anush\Desktop\mini_expense_tracker\client\src\pages\AISuggestion.jsx
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../contexts/AuthContext";
 import { DollarSign, PiggyBank, Brain } from "lucide-react";
 import { ClipLoader } from "react-spinners";
-import { getAccessToken } from "../utils/cookieUtils";
+
 const AISuggestion = () => {
   const [income, setIncome] = useState("");
   const [budget, setBudget] = useState("");
@@ -20,7 +19,7 @@ const AISuggestion = () => {
       setLoading(true);
       try {
         const response = await axios.get(`${API_URL}/api/expenses/total`, {
-          withCredentials: true,
+          withCredentials: true, // Ensures token is sent with the request
         });
         setTotalSpending(response.data.totalSpending);
       } catch (error) {
@@ -37,29 +36,15 @@ const AISuggestion = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      // Retrieve the access token from cookies
-      const accessToken = getAccessToken();
-
-      if (!accessToken) {
-        console.error("Access token not found");
-        setSuggestions("Authentication error: Access token missing.");
-        return;
-      }
-
       const response = await axios.post(
         `${API_URL}/api/ai/suggestions`,
         { income, budget, totalSpending },
-        {
-          withCredentials: true,
-          headers: {
-            Authorization: `Bearer ${accessToken}`, // Include the access token
-          },
-        }
+        { withCredentials: true }
       );
       setSuggestions(response.data.suggestions);
     } catch (error) {
       console.error("Error getting suggestions:", error);
-      setSuggestions("Failed to get suggestions.");
+      setSuggestions("Failed to get suggestions. Please try again.");
     } finally {
       setLoading(false);
     }
