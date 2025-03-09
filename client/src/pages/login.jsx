@@ -11,7 +11,7 @@ const Login = () => {
   const [form, setForm] = useState({ email: "", password: "", name: "" });
   const [error, setError] = useState("");
 
-  const API_URL = "http://localhost:8000/api/auth";
+  const API_URL = "https://ai-powerd-financial-tracker.onrender.com/api/auth";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
