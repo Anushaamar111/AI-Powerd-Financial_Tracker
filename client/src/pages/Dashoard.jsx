@@ -1,3 +1,4 @@
+// filepath: c:\Users\anush\Desktop\mini_expense_tracker\client\src\pages\Dashoard.jsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
@@ -174,22 +175,26 @@ export default function Dashboard() {
     try {
       const accessToken = getAccessToken();
 
-    if (!accessToken) {
-      console.error("Access token not found");
-      // Handle the error appropriately (e.g., redirect to login)
-      return;
-    }
-
-    const { data } = await axios.post(
-      API_URL,
-      form,
-      {
-        withCredentials: true,
-        headers: {
-          Authorization: `Bearer ${accessToken}`, // Include the access token
-        },
+      if (!accessToken) {
+        console.error("Access token not found");
+        // Handle the error appropriately (e.g., redirect to login)
+        return;
       }
-    );
+
+      console.log("Form Data:", form); // Add this line
+      console.log("API URL:", API_URL); // Add this line
+      console.log("Access Token:", accessToken); // Add this line
+
+      const { data } = await axios.post(
+        API_URL,
+        form,
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${accessToken}`, // Include the access token
+          },
+        }
+      );
       setExpenses((prev) => [data.expense, ...prev]);
       fetchChartData();
       setShowAddForm(false);
