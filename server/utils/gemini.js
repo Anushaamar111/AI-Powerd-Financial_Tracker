@@ -12,14 +12,15 @@ export const getExpenseSuggestions = async (income, budget, userId) => {
     const totalSpending = await getUserSpending(userId); // Fetch total spending from the database
 
     const prompt = `
-      Here is the financial information for a user:
-      - Monthly Income: ₹${income}
-      - Monthly Budget: ₹${budget}
-      - Total Spending so far: ₹${totalSpending}
-
-      Based on this data, please provide detailed and actionable suggestions for better managing their finances.
-      The suggestions should be practical and easy to implement.
-      Present the suggestions in a clear and concise list format.
+    Here is the financial information for a user:
+    - Monthly Income: ₹${income}
+    - Monthly Budget: ₹${budget}
+    - Total Spending so far: ₹${totalSpending}
+    
+    Based on this data, please provide detailed and actionable suggestions for better managing their finances.
+    - Use simple language and avoid markdown or special formatting like **bold** or *italics*.
+    - Present the suggestions as a numbered or bulleted list in plain text.
+    - Keep the recommendations practical and easy to implement.
     `;
 
     const result = await model.generateContent(prompt);
